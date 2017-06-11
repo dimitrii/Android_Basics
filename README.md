@@ -4,7 +4,7 @@ A collection of Android Studio projects that showcase core concepts.
 
 ## Lessons
 
-* [Activity](#)
+* [Activity](https://github.com/dimitrii/Android_Basics/tree/activity)
 
 ## License
 
