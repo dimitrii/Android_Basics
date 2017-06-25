@@ -45,6 +45,20 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+            if(event.getX() > getWidth()/2) {
+                spaceShip.setXVelocity(5);
+            }
+            else {
+                spaceShip.setXVelocity(-5);
+            }
+        }
+
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            spaceShip.setXVelocity(0);
+        }
+
         return true;
     }
 
