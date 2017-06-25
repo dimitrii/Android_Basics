@@ -22,7 +22,7 @@ public class SpaceShip {
     public void setXVelocity(int xVelocity) {
         this.xVelocity = xVelocity;
     }
-    public int getxVelocity()
+    public int getXVelocity()
     {
         return this.xVelocity;
     }
