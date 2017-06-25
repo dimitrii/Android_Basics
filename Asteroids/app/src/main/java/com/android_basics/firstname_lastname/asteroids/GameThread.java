@@ -20,7 +20,6 @@ public class GameThread extends Thread {
         this.gameView = gameView;
     }
 
-
     @Override
     @SuppressLint("WrongCall")
     public void run() {
