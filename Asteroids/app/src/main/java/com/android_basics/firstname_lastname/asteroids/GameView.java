@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
@@ -39,23 +40,34 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
+
         thread.setRunning(true);
         thread.start();
 
         astroids = new ArrayList<Asteroid>();
         astroidsToDelete = new ArrayList<Integer>();
 
+        Bitmap resizedAsteroidBitmap = Util.getResizedBitmap(BitmapFactory.decodeResource(getResources(),
+                R.drawable.asteroid),
+                200, 200);
+
         Timer t = new Timer();
-        t.scheduleAtFixedRate(new TimerTask() {
+
+        class AsteroidTimer extends TimerTask {
+            private Bitmap asteroidBitmap;
+            AsteroidTimer(Bitmap bitmap) {
+                super();
+                this.asteroidBitmap = bitmap;
+            }
             public void run() {
                 Random generator = new Random();
-                Bitmap spaceshipBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.spaceship);
-                int startingXPosition = generator.nextInt(getWidth() - spaceshipBitmap.getWidth());
-                Bitmap asteroidBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.asteroid);
+                int startingXPosition = generator.nextInt(getWidth());
                 Asteroid asteroid = new Asteroid(asteroidBitmap, startingXPosition, 0);
                 astroids.add(asteroid);
             }
-        }, 0, 2000);
+        }
+        AsteroidTimer astroidTimerTask = new AsteroidTimer(resizedAsteroidBitmap);
+        t.scheduleAtFixedRate(astroidTimerTask, 0, 2000);
     }
 
     @Override
@@ -73,19 +85,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-
             if(event.getX() > getWidth()/2) {
-                spaceShip.setXVelocity(5);
+                spaceShip.setXVelocity(10);
             }
             else {
-                spaceShip.setXVelocity(-5);
+                spaceShip.setXVelocity(-10);
             }
-        }
-
-        if (event.getAction() == MotionEvent.ACTION_UP) {
+        } else if (event.getAction() == MotionEvent.ACTION_UP) {
             spaceShip.setXVelocity(0);
         }
-
         return true;
     }
 
@@ -100,7 +108,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             for (Asteroid asteroid : astroids) {
                 asteroid.drawBitmap(canvas);
                 if (asteroid.getY() > getHeight()) {
-                    Integer integer = Integer.valueOf(astroids.indexOf(asteroid));
+                    Integer integer = astroids.indexOf(asteroid);
                     astroidsToDelete.add(integer);
                 }
             }

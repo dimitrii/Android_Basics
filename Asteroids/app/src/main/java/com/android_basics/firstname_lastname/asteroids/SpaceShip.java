@@ -3,29 +3,7 @@ package com.android_basics.firstname_lastname.asteroids;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
-public class SpaceShip {
-
-    private Bitmap bitmap;
-    public Bitmap getBitmap()
-    {
-        return this.bitmap;
-    }
-    public void setBitmap(Bitmap bitmap)
-    {
-        this.bitmap = bitmap;
-    }
-
-    private int x;
-    private int y;
-
-    private int xVelocity;
-    public void setXVelocity(int xVelocity) {
-        this.xVelocity = xVelocity;
-    }
-    public int getXVelocity()
-    {
-        return this.xVelocity;
-    }
+public class SpaceShip extends CanvasBitmap{
 
     public SpaceShip(Bitmap bitmap, int x, int y)
     {
@@ -37,6 +15,14 @@ public class SpaceShip {
     public void drawBitmap(Canvas canvas)
     {
         canvas.drawBitmap(this.bitmap, this.x, this.y,null);
-        x = x + xVelocity;
+
+        // Set new X - prevent ship from flying way off screen
+        Integer newX = this.x + this.xVelocity;
+        if (newX < 0) {
+            newX = 0;
+        } else if (newX > canvas.getWidth() - this.bitmap.getWidth()) {
+            newX = canvas.getWidth() - this.bitmap.getWidth();
+        }
+        this.x = newX;
     }
 }
