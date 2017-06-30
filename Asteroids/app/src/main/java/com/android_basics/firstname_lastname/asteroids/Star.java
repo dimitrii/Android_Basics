@@ -4,9 +4,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
+import java.util.Random;
+
 public class Star extends CanvasObject {
 
-    private static final float R = 2.0f;
+    private static final float RADIUS = 2.0f;
+
     private Paint paint;
 
     public Star(int x, int y) {
@@ -15,10 +18,26 @@ public class Star extends CanvasObject {
 
         this.paint = new Paint();
         this.paint.setColor(Color.WHITE);
+
+        //
+//        Random generator = new Random();
+//        if (generator.nextFloat() > 0.5f) {
+//
+//        }
+        this.yVelocity = 20;
     }
 
     @Override
     public void drawBitmap(Canvas canvas) {
-        canvas.drawCircle((float)this.x, (float)this.y, Star.R, paint);
+        this.y = this.y + this.yVelocity;
+        canvas.drawCircle((float)this.x, (float)this.y, Star.RADIUS, paint);
+    }
+
+    @Override
+    public boolean checkRemove(Canvas canvas) {
+        if (this.y > canvas.getHeight()) {
+            return true;
+        }
+        return false;
     }
 }

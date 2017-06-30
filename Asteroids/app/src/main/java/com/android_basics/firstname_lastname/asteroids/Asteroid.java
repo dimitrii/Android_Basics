@@ -20,4 +20,12 @@ public class Asteroid extends CanvasBitmap {
         canvas.drawBitmap(this.bitmap, this.x, this.y, null);
         this.y = this.y + this.yVelocity;
     }
+
+    @Override
+    public boolean checkRemove(Canvas canvas) {
+        if (this.y > canvas.getHeight()) {
+            return true;
+        }
+        return false;
+    }
 }

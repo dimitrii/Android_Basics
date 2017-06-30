@@ -39,4 +39,9 @@ class CanvasObject {
     }
 
     public void drawBitmap(Canvas canvas) {}
+
+    // Test if Object should be removed
+    public boolean checkRemove(Canvas canvas) {
+        return false;
+    }
 }
