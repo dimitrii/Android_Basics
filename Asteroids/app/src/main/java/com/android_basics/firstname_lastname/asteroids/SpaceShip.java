@@ -12,6 +12,7 @@ public class SpaceShip extends CanvasBitmap{
         this.y = y;
     }
 
+    @Override
     public void drawBitmap(Canvas canvas)
     {
         canvas.drawBitmap(this.bitmap, this.x, this.y,null);

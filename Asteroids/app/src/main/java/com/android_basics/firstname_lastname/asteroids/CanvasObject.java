@@ -1,5 +1,7 @@
 package com.android_basics.firstname_lastname.asteroids;
 
+import android.graphics.Canvas;
+
 class CanvasObject {
     // x
     protected int x;
@@ -35,4 +37,6 @@ class CanvasObject {
     {
         return this.xVelocity;
     }
+
+    public void drawBitmap(Canvas canvas) {}
 }

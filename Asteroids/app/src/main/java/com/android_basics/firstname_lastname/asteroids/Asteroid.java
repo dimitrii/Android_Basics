@@ -14,6 +14,7 @@ public class Asteroid extends CanvasBitmap {
         this.yVelocity = 10;
     }
 
+    @Override
     public void drawBitmap(Canvas canvas)
     {
         canvas.drawBitmap(this.bitmap, this.x, this.y, null);

@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
@@ -21,17 +20,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private SpaceShip spaceShip;
 
-    private ArrayList<Asteroid> astroids;
-    private ArrayList<Integer> astroidsToDelete;
+    private ArrayList<CanvasObject> spaceObjects;
+    private ArrayList<Integer> spaceObjectsToDelete;
 
     public GameView(Context context) {
         super(context);
         getHolder().addCallback(this);
-        thread = new GameThread(getHolder(),this);
         setFocusable(true);
-
-        // Create Scene
-        spaceShip = new SpaceShip(BitmapFactory.decodeResource(getResources(), R.drawable.spaceship), 50, 50);
     }
 
     @Override
@@ -41,18 +36,26 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
 
-        thread.setRunning(true);
-        thread.start();
+        // Create Scene
+        spaceShip = new SpaceShip(BitmapFactory.decodeResource(getResources(), R.drawable.spaceship), 50, 50);
 
-        astroids = new ArrayList<Asteroid>();
-        astroidsToDelete = new ArrayList<Integer>();
+        spaceObjects = new ArrayList<CanvasObject>();
+        spaceObjectsToDelete = new ArrayList<Integer>();
 
+        // Create Stars
+        for(int i =0; i < 100; i++) {
+            Random generator = new Random();
+            int starX = generator.nextInt(getWidth());
+            int starY = generator.nextInt(getHeight());
+            spaceObjects.add(new Star(starX, starY));
+        }
+
+        // Launch Astroids
         Bitmap resizedAsteroidBitmap = Util.getResizedBitmap(BitmapFactory.decodeResource(getResources(),
                 R.drawable.asteroid),
                 200, 200);
 
         Timer t = new Timer();
-
         class AsteroidTimer extends TimerTask {
             private Bitmap asteroidBitmap;
             AsteroidTimer(Bitmap bitmap) {
@@ -63,11 +66,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 Random generator = new Random();
                 int startingXPosition = generator.nextInt(getWidth());
                 Asteroid asteroid = new Asteroid(asteroidBitmap, startingXPosition, 0);
-                astroids.add(asteroid);
+                spaceObjects.add(asteroid);
             }
         }
         AsteroidTimer astroidTimerTask = new AsteroidTimer(resizedAsteroidBitmap);
         t.scheduleAtFixedRate(astroidTimerTask, 0, 2000);
+
+        // Start Thread
+        thread = new GameThread(getHolder(),this);
+        thread.setRunning(true);
+        thread.start();
     }
 
     @Override
@@ -103,19 +111,19 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         canvas.drawColor(Color.BLACK);
         spaceShip.drawBitmap(canvas);
 
-        // Draw Astroids
-        synchronized (astroids) {
-            for (Asteroid asteroid : astroids) {
-                asteroid.drawBitmap(canvas);
-                if (asteroid.getY() > getHeight()) {
-                    Integer integer = astroids.indexOf(asteroid);
-                    astroidsToDelete.add(integer);
+        // Draw Space Objects
+        synchronized (spaceObjects) {
+            for (CanvasObject spaceObject : spaceObjects) {
+                spaceObject.drawBitmap(canvas);
+                if (spaceObject.getY() > getHeight()) {
+                    Integer integer = spaceObjects.indexOf(spaceObject);
+                    spaceObjectsToDelete.add(integer);
                 }
             }
         }
-        for(Integer i: astroidsToDelete) {
-            astroids.remove(i.intValue());
+        for(Integer i: spaceObjectsToDelete) {
+            spaceObjects.remove(i.intValue());
         }
-        astroidsToDelete.clear();
+        spaceObjectsToDelete.clear();
     }
 }
