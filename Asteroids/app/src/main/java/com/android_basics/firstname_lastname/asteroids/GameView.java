@@ -5,6 +5,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
@@ -14,25 +18,45 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class GameView extends SurfaceView implements SurfaceHolder.Callback {
+public class GameView extends SurfaceView implements SurfaceHolder.Callback, SensorEventListener {
 
     GameThread thread;
 
     private SpaceShip spaceShip;
 
     private ArrayList<CanvasObject> backdropSpaceObjects;
+    private ArrayList<CanvasObject> tempBackdropSpaceObjects;
     private ArrayList<CanvasObject> backdropSpaceObjectsToRemove;
     private ArrayList<CanvasObject> spaceObjects;
     private ArrayList<CanvasObject> spaceObjectsToRemove;
+    private ArrayList<CanvasObject> tempSpaceObjects;
 
     private Random generator = new Random();
     private Bitmap resizedAsteroidBitmap;
+
+    private SensorManager sensorManager;
 
     public GameView(Context context) {
         super(context);
         getHolder().addCallback(this);
         setFocusable(true);
+
+        sensorManager = (SensorManager)context.getSystemService(Context.SENSOR_SERVICE);
+
+        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_NORMAL);
     }
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            float rawX = event.values[0];
+            float normalizedX = rawX * -2f;
+            spaceShip.setXVelocity((int)normalizedX);
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
@@ -113,7 +137,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         canvas.drawColor(Color.BLACK);
 
         // Draw Backdrop
-        ArrayList<CanvasObject> tempBackdropSpaceObjects = new ArrayList<CanvasObject>(backdropSpaceObjects);
+        tempBackdropSpaceObjects = new ArrayList<CanvasObject>(backdropSpaceObjects);
         for (CanvasObject spaceObject : tempBackdropSpaceObjects) {
             spaceObject.drawBitmap(canvas);
             if (spaceObject.checkRemove(canvas)) {
@@ -124,7 +148,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         backdropSpaceObjectsToRemove.clear();
 
         // Draw spaceObject
-        ArrayList<CanvasObject> tempSpaceObjects = new ArrayList<CanvasObject>(spaceObjects);
+        tempSpaceObjects = new ArrayList<CanvasObject>(spaceObjects);
         for (CanvasObject spaceObject : tempSpaceObjects) {
             spaceObject.drawBitmap(canvas);
             if (spaceObject.checkRemove(canvas)) {
