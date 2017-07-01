@@ -10,7 +10,6 @@ import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -106,7 +105,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     @Override
-    protected synchronized void onDraw(final Canvas canvas) {
+    protected void onDraw(final Canvas canvas) {
 
         if(canvas == null)
             return;
@@ -114,19 +113,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         canvas.drawColor(Color.BLACK);
 
         // Draw Backdrop
-//        synchronized (backdropSpaceObjects) {
-//            for (CanvasObject spaceObject : backdropSpaceObjects) {
-//                spaceObject.drawBitmap(canvas);
-//                if (spaceObject.checkRemove(canvas)) {
-//                    backdropSpaceObjectsToRemove.add(spaceObject);
-//                }
-//            }
-//            backdropSpaceObjects.removeAll(backdropSpaceObjectsToRemove);
-//            backdropSpaceObjectsToRemove.clear();
-//        }
-
-        for (Iterator<CanvasObject> i = backdropSpaceObjects.iterator() ; i.hasNext();) {
-            CanvasObject spaceObject = i.next();
+        ArrayList<CanvasObject> tempBackdropSpaceObjects = new ArrayList<CanvasObject>(backdropSpaceObjects);
+        for (CanvasObject spaceObject : tempBackdropSpaceObjects) {
             spaceObject.drawBitmap(canvas);
             if (spaceObject.checkRemove(canvas)) {
                 backdropSpaceObjectsToRemove.add(spaceObject);
@@ -136,19 +124,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         backdropSpaceObjectsToRemove.clear();
 
         // Draw spaceObject
-//        synchronized (spaceObjects) {
-//            for (CanvasObject spaceObject : spaceObjects) {
-//                spaceObject.drawBitmap(canvas);
-//                if (spaceObject.checkRemove(canvas)) {
-//                    spaceObjectsToRemove.add(spaceObject);
-//                }
-//            }
-//            spaceObjects.removeAll(spaceObjectsToRemove);
-//            spaceObjectsToRemove.clear();
-//        }
-
-        for (Iterator<CanvasObject> i = spaceObjects.iterator() ; i.hasNext();) {
-            CanvasObject spaceObject = i.next();
+        ArrayList<CanvasObject> tempSpaceObjects = new ArrayList<CanvasObject>(spaceObjects);
+        for (CanvasObject spaceObject : tempSpaceObjects) {
             spaceObject.drawBitmap(canvas);
             if (spaceObject.checkRemove(canvas)) {
                 spaceObjectsToRemove.add(spaceObject);
@@ -156,9 +133,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
         spaceObjects.removeAll(spaceObjectsToRemove);
         spaceObjectsToRemove.clear();
+
         // Spaceship
-        synchronized(spaceShip) {
-            spaceShip.drawBitmap(canvas);
-        }
+        spaceShip.drawBitmap(canvas);
     }
 }
