@@ -1,22 +1,16 @@
 package com.android_basics.firstname_lastname.asteroids;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.os.SystemClock;
-import android.text.TextPaint;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 
-import com.android.internal.util.Predicate;
-
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -35,10 +29,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private Random generator = new Random();
     private Bitmap resizedAsteroidBitmap;
 
-    // FPS
-    private String FpsString;
-    private TextPaint FpsStringPaint;
-
     public GameView(Context context) {
         super(context);
         getHolder().addCallback(this);
@@ -52,18 +42,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
 
-        // FPS
-        FpsStringPaint = new TextPaint();
-        FpsStringPaint.setColor(Color.WHITE);
-        FpsStringPaint.setTextSize(20);
-
-        // Create Scene
-        spaceShip = new SpaceShip(BitmapFactory.decodeResource(getResources(), R.drawable.spaceship), 50, 50);
-
         backdropSpaceObjects = new ArrayList<CanvasObject>();
         backdropSpaceObjectsToRemove = new ArrayList<CanvasObject>();
         spaceObjects = new ArrayList<CanvasObject>();
         spaceObjectsToRemove = new ArrayList<CanvasObject>();
+
+        // Create Scene
+        Bitmap spaceshipBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.spaceship);
+        spaceShip = new SpaceShip(spaceshipBitmap, 50, getHeight() - spaceshipBitmap.getHeight());
 
         // Launch Stars
         Timer starTimer = new Timer();
@@ -74,7 +60,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             }
         }, 0, 300);
 
-        // Launch Astroids
+        // Launch Asteroids
         resizedAsteroidBitmap = Util.getResizedBitmap(BitmapFactory.decodeResource(getResources(),
                 R.drawable.asteroid),
                 200, 200);
@@ -120,41 +106,59 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     @Override
-    protected void onDraw(final Canvas canvas) {
+    protected synchronized void onDraw(final Canvas canvas) {
 
-        long start = SystemClock.currentThreadTimeMillis();
+        if(canvas == null)
+            return;
 
         canvas.drawColor(Color.BLACK);
 
         // Draw Backdrop
-        synchronized (backdropSpaceObjects) {
-            for (CanvasObject spaceObject : backdropSpaceObjects) {
-                spaceObject.drawBitmap(canvas);
-                if (spaceObject.checkRemove(canvas)) {
-                    backdropSpaceObjectsToRemove.add(spaceObject);
-                }
+//        synchronized (backdropSpaceObjects) {
+//            for (CanvasObject spaceObject : backdropSpaceObjects) {
+//                spaceObject.drawBitmap(canvas);
+//                if (spaceObject.checkRemove(canvas)) {
+//                    backdropSpaceObjectsToRemove.add(spaceObject);
+//                }
+//            }
+//            backdropSpaceObjects.removeAll(backdropSpaceObjectsToRemove);
+//            backdropSpaceObjectsToRemove.clear();
+//        }
+
+        for (Iterator<CanvasObject> i = backdropSpaceObjects.iterator() ; i.hasNext();) {
+            CanvasObject spaceObject = i.next();
+            spaceObject.drawBitmap(canvas);
+            if (spaceObject.checkRemove(canvas)) {
+                backdropSpaceObjectsToRemove.add(spaceObject);
             }
-            backdropSpaceObjects.removeAll(backdropSpaceObjectsToRemove);
-            backdropSpaceObjectsToRemove.clear();
         }
+        backdropSpaceObjects.removeAll(backdropSpaceObjectsToRemove);
+        backdropSpaceObjectsToRemove.clear();
 
         // Draw spaceObject
-        synchronized (spaceObjects) {
-            for (CanvasObject spaceObject : spaceObjects) {
-                spaceObject.drawBitmap(canvas);
-                if (spaceObject.checkRemove(canvas)) {
-                    spaceObjectsToRemove.add(spaceObject);
-                }
+//        synchronized (spaceObjects) {
+//            for (CanvasObject spaceObject : spaceObjects) {
+//                spaceObject.drawBitmap(canvas);
+//                if (spaceObject.checkRemove(canvas)) {
+//                    spaceObjectsToRemove.add(spaceObject);
+//                }
+//            }
+//            spaceObjects.removeAll(spaceObjectsToRemove);
+//            spaceObjectsToRemove.clear();
+//        }
+
+        for (Iterator<CanvasObject> i = spaceObjects.iterator() ; i.hasNext();) {
+            CanvasObject spaceObject = i.next();
+            spaceObject.drawBitmap(canvas);
+            if (spaceObject.checkRemove(canvas)) {
+                spaceObjectsToRemove.add(spaceObject);
             }
-            spaceObjects.removeAll(spaceObjectsToRemove);
-            spaceObjectsToRemove.clear();
         }
-
+        spaceObjects.removeAll(spaceObjectsToRemove);
+        spaceObjectsToRemove.clear();
         // Spaceship
-        spaceShip.drawBitmap(canvas);
-
-        // Calc FPS
-        FpsString = "FPS: " + (SystemClock.currentThreadTimeMillis() - start);
-        canvas.drawText(FpsString,0,0,FpsStringPaint);
+        synchronized(spaceShip) {
+            spaceShip.drawBitmap(canvas);
+        }
     }
 }
