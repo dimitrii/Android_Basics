@@ -11,7 +11,7 @@ public class Asteroid extends CanvasBitmap {
         this.x = x;
         this.y = y;
 
-        this.yVelocity = 10;
+        this.yVelocity = 12;
     }
 
     @Override

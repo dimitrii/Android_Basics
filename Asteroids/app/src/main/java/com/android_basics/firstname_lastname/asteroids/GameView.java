@@ -81,7 +81,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Sen
                 Star star = new Star(generator.nextInt(getWidth()), 0);
                 backdropSpaceObjects.add(star);
             }
-        }, 0, 300);
+        }, 0, 100);
 
         // Launch Asteroids
         resizedAsteroidBitmap = Util.getResizedBitmap(BitmapFactory.decodeResource(getResources(),
@@ -93,7 +93,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Sen
                 Asteroid asteroid = new Asteroid(resizedAsteroidBitmap, generator.nextInt(getWidth()), 0);
                 spaceObjects.add(asteroid);
             }
-        }, 0, 2000);
+        }, 0, 1000);
 
         // Start Thread
         thread = new GameThread(getHolder(),this);
@@ -115,16 +115,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Sen
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            if(event.getX() > getWidth()/2) {
-                spaceShip.setXVelocity(10);
-            }
-            else {
-                spaceShip.setXVelocity(-10);
-            }
-        } else if (event.getAction() == MotionEvent.ACTION_UP) {
-            spaceShip.setXVelocity(0);
-        }
+//        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+//            if(event.getX() > getWidth()/2) {
+//                spaceShip.setXVelocity(10);
+//            }
+//            else {
+//                spaceShip.setXVelocity(-10);
+//            }
+//        } else if (event.getAction() == MotionEvent.ACTION_UP) {
+//            spaceShip.setXVelocity(0);
+//        }
         return true;
     }
 
@@ -137,25 +137,31 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Sen
         canvas.drawColor(Color.BLACK);
 
         // Draw Backdrop
-        tempBackdropSpaceObjects = new ArrayList<CanvasObject>(backdropSpaceObjects);
+        synchronized (backdropSpaceObjects) {
+            tempBackdropSpaceObjects = new ArrayList<CanvasObject>(backdropSpaceObjects);
+        }
         for (CanvasObject spaceObject : tempBackdropSpaceObjects) {
             spaceObject.drawBitmap(canvas);
             if (spaceObject.checkRemove(canvas)) {
                 backdropSpaceObjectsToRemove.add(spaceObject);
             }
         }
-        backdropSpaceObjects.removeAll(backdropSpaceObjectsToRemove);
+        tempBackdropSpaceObjects.removeAll(backdropSpaceObjectsToRemove);
+        backdropSpaceObjects = tempBackdropSpaceObjects;
         backdropSpaceObjectsToRemove.clear();
 
         // Draw spaceObject
-        tempSpaceObjects = new ArrayList<CanvasObject>(spaceObjects);
+        synchronized (spaceObjects) {
+            tempSpaceObjects = new ArrayList<CanvasObject>(spaceObjects);
+        }
         for (CanvasObject spaceObject : tempSpaceObjects) {
             spaceObject.drawBitmap(canvas);
             if (spaceObject.checkRemove(canvas)) {
                 spaceObjectsToRemove.add(spaceObject);
             }
         }
-        spaceObjects.removeAll(spaceObjectsToRemove);
+        tempSpaceObjects.removeAll(spaceObjectsToRemove);
+        spaceObjects = tempSpaceObjects;
         spaceObjectsToRemove.clear();
 
         // Spaceship
