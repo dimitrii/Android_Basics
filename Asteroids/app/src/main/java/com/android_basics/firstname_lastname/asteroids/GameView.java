@@ -48,6 +48,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Sen
     }
     @Override
     public void onSensorChanged(SensorEvent event) {
+        if (spaceShip == null)
+            return;
+
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             float rawX = event.values[0];
             float normalizedX = rawX * -2f;
