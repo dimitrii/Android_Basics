@@ -19,22 +19,14 @@ public class AsteroidGameActivity extends Activity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
     protected void onStop() {
         super.onStop();
+        gameView.stop();
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
+        gameView.start();
     }
 }

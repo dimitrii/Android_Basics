@@ -15,8 +15,6 @@ public class SpaceShip extends CanvasBitmap{
     @Override
     public void drawBitmap(Canvas canvas)
     {
-        canvas.drawBitmap(this.bitmap, this.x, this.y,null);
-
         // Set new X - prevent ship from flying way off screen
         Integer newX = this.x + this.xVelocity;
         if (newX < 0) {
@@ -25,5 +23,15 @@ public class SpaceShip extends CanvasBitmap{
             newX = canvas.getWidth() - this.bitmap.getWidth();
         }
         this.x = newX;
+        // Set new Y
+        Integer newY = this.y + this.yVelocity;
+        if (newY < 0) {
+            newY = 0;
+        } else if (newY > canvas.getHeight() - this.bitmap.getHeight()) {
+            newY = canvas.getHeight() - this.bitmap.getHeight();
+        }
+        this.y = newY;
+        
+        canvas.drawBitmap(this.bitmap, this.x, this.y,null);
     }
 }

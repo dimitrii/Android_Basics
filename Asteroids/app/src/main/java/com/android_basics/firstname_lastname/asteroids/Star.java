@@ -11,21 +11,26 @@ public class Star extends CanvasObject {
     private float radius;
     private Paint paint;
 
+    private final static float SMALL_R = 5f;
+    private final static int SMALL_VEL = 5;
+    private final static float LARGE_R = 10f;
+    private final static int LARGE_VEL = 10;
+
     public Star(int x, int y) {
         this.x = x;
         this.y = y;
 
-        this.paint = new Paint();
-        this.paint.setColor(Color.WHITE);
-
-        //
         Random generator = new Random();
         if (generator.nextFloat() > 0.5f) {
-            this.yVelocity = 5;
-            this.radius = 2.0f;
+            this.yVelocity = SMALL_VEL;
+            this.radius = SMALL_R;
+            paint = new Paint();
+            paint.setColor(Color.argb(150,255,255,255));
         } else {
-            this.yVelocity = 10;
-            this.radius = 5.0f;
+            this.yVelocity = LARGE_VEL;
+            this.radius = LARGE_R;
+            paint = new Paint();
+            paint.setColor(Color.argb(230,255,255,255));
         }
     }
 
