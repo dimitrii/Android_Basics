@@ -43,6 +43,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Sen
     private boolean showLines;
     private final Paint linePaint;
 
+    private Worm worm;
+
     public GameView(Context context) {
         super(context);
         getHolder().addCallback(this);
@@ -55,6 +57,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Sen
 
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                 SensorManager.SENSOR_DELAY_NORMAL);
+
+        worm = new Worm();
     }
 
     @Override
@@ -129,6 +133,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Sen
             return;
 
         canvas.drawColor(Color.BLACK);
+
+        worm.draw(canvas);
 
         // Draw Backdrop
         synchronized (backdropSpaceObjects) {
