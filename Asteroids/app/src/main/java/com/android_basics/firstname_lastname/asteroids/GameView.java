@@ -178,6 +178,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Sen
         tempSpaceObjects.removeAll(spaceObjectsToRemove);
         spaceObjects = tempSpaceObjects;
         spaceObjectsToRemove.clear();
+
     }
 
     public void stop() {
