@@ -6,27 +6,34 @@
     <ListView
         android:id="@+id/mainListView"
         android:layout_width="match_parent"
-        android:layout_height="fill_parent">
-    </ListView>
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/linearLayout2"
+        android:divider="@color/messageBackground"
+        android:dividerHeight="0dp"
+        android:stackFromBottom="true" />
     <LinearLayout
-        android:padding="22dp"
-        android:orientation="horizontal"
-        android:background="@color/colorAccent"
-        android:layout_alignParentBottom="true"
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorAccent"
+        android:orientation="horizontal"
+        android:paddingLeft="22dp"
+        android:paddingRight="22dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp">
         <EditText
             android:id="@+id/mainEditText"
-            android:layout_weight="10"
+            android:layout_marginRight="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:imeOptions="actionDone"/>
+            android:layout_weight="15"
+            android:imeOptions="actionDone" />
         <Button
             android:id="@+id/sendButton"
-            android:text="Send"
-            android:onClick="sendMessage"
-            android:layout_weight="1"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/send" />
     </LinearLayout>
 </RelativeLayout>

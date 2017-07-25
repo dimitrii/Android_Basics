@@ -32,7 +32,7 @@ public class MainActivity extends Activity {
         }});
 
         customArrayAdapter = new CustomArrayAdapter(this,messages);
-        ListView listView = (ListView)findViewById(R.id.mainListView);
+        final ListView listView = (ListView)findViewById(R.id.mainListView);
         listView.setAdapter(customArrayAdapter);
 
         editText = (EditText)findViewById(R.id.mainEditText);
@@ -48,6 +48,7 @@ public class MainActivity extends Activity {
                 editText.setText("");
                 // Send
                 customArrayAdapter.add(newMessage);
+                listView.setSelection(customArrayAdapter.getCount() - 1);
             }
         });
     }
@@ -56,7 +57,7 @@ public class MainActivity extends Activity {
         private final Context context;
         private final ArrayList<Message> arrayList;
 
-        public CustomArrayAdapter(Context context, ArrayList<Message> objects) {
+        CustomArrayAdapter(Context context, ArrayList<Message> objects) {
             super(context, 0, objects);
             this.context = context;
             this.arrayList = objects;
