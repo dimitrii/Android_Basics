@@ -10,6 +10,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
@@ -46,20 +47,20 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Sen
     private boolean gameOver;
 
     public GameView(Context context) {
-        super(context);
+        this(context, null);
+    }
+
+    public GameView(Context context, AttributeSet set) {
+        super(context, set);
         getHolder().addCallback(this);
         setFocusable(true);
-
         linePaint = new Paint();
         linePaint.setColor(Color.WHITE);
-
         sensorManager = (SensorManager)context.getSystemService(Context.SENSOR_SERVICE);
-
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                 SensorManager.SENSOR_DELAY_NORMAL);
 
     }
-
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (spaceShip == null)
